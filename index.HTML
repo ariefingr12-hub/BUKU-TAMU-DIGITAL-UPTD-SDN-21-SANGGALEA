@@ -28,7 +28,6 @@
             color: var(--secondary-gray);
             min-height: 100vh;
             background-color: var(--bg-color);
-            /* Pola Grid dan Cahaya Neon */
             background-image: 
                 radial-gradient(circle at 15% 50%, rgba(102, 252, 241, 0.15), transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(69, 162, 158, 0.15), transparent 25%),
@@ -63,14 +62,14 @@
 
         header h1 {
             font-size: 3.5em;
-            color: #ffffff; /* Warna putih solid */
+            color: #ffffff;
             margin: 0;
             letter-spacing: 2px;
             font-weight: 700;
         }
 
         header h1 span {
-            color: var(--primary-cyan); /* Warna cyan solid tanpa efek blur/aneh */
+            color: var(--primary-cyan);
         }
 
         /* --- GLASSMORPHISM CARD --- */
@@ -136,6 +135,27 @@
             transform: translateY(-2px);
         }
 
+        /* --- TOMBOL HAPUS --- */
+        .btn-delete {
+            background: rgba(255, 59, 48, 0.1);
+            color: #ff3b30;
+            border: 1px solid rgba(255, 59, 48, 0.5);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #ff3b30;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+            transform: scale(1.05);
+        }
+
         .header-data {
             display: flex;
             justify-content: space-between;
@@ -150,7 +170,6 @@
             color: white;
         }
 
-        /* Filter Buttons */
         .filter-group {
             display: flex;
             gap: 10px;
@@ -222,48 +241,20 @@
             font-weight: 600;
         }
 
-        /* Animasi Sederhana */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- FITUR CETAK (PRINT) --- */
         @media print {
-            body {
-                background: white;
-                color: black;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .data-section {
-                box-shadow: none;
-                border: none;
-                background: transparent;
-                padding: 0;
-            }
-            header {
-                margin-bottom: 20px;
-            }
-            .logo-instansi {
-                max-width: 100px;
-            }
-            th, td {
-                border: 1px solid #ccc;
-                color: black;
-                padding: 8px;
-            }
-            table {
-                border-collapse: collapse;
-            }
-            .badge-khusus, .badge-umum {
-                border: none;
-                color: black;
-                background: transparent;
-                padding: 0;
-                font-weight: normal;
-            }
+            body { background: white; color: black; }
+            .no-print { display: none !important; }
+            .data-section { box-shadow: none; border: none; background: transparent; padding: 0; }
+            header { margin-bottom: 20px; }
+            .logo-instansi { max-width: 100px; }
+            th, td { border: 1px solid #ccc; color: black; padding: 8px; }
+            table { border-collapse: collapse; }
+            .badge-khusus, .badge-umum { border: none; color: black; background: transparent; padding: 0; font-weight: normal; }
         }
     </style>
 </head>
@@ -320,7 +311,7 @@
                             <th>Kategori</th>
                             <th>Pesan</th>
                             <th>Waktu</th>
-                        </tr>
+                            <th class="no-print">Aksi</th> </tr>
                     </thead>
                     <tbody id="daftarTamu">
                         </tbody>
@@ -361,7 +352,7 @@
             daftarTamu.innerHTML = '';
             
             if(data.length === 0) {
-                daftarTamu.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: #c5c6c7;">Sistem siap. Belum ada data tamu.</td></tr>`;
+                daftarTamu.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px; color: #c5c6c7;">Sistem siap. Belum ada data tamu.</td></tr>`;
                 return;
             }
 
@@ -377,6 +368,9 @@
                         <td><span class="${badgeClass}">${tamu.kategori || 'Umum'}</span></td>
                         <td>${tamu.pesan}</td>
                         <td>${date}</td>
+                        <td class="no-print">
+                            <button class="btn-delete" onclick="hapusTamu(${tamu.id})">Hapus</button>
+                        </td>
                     </tr>
                 `;
                 daftarTamu.innerHTML += row;
@@ -392,6 +386,27 @@
             } else {
                 const filteredData = allTamuData.filter(tamu => tamu.kategori === kategori);
                 renderTabel(filteredData);
+            }
+        }
+
+        // --- FUNGSI BARU: HAPUS DATA ---
+        async function hapusTamu(id) {
+            // Tampilkan pop-up konfirmasi
+            const konfirmasi = confirm("Apakah Anda yakin ingin menghapus data tamu ini?");
+            if (!konfirmasi) return; // Batal jika user klik 'Cancel'
+
+            // Perintah hapus ke Supabase
+            const { error } = await db
+                .from('tamu')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                alert('Gagal menghapus data! Periksa koneksi Anda.');
+                console.error(error);
+            } else {
+                // Refresh data setelah berhasil dihapus
+                fetchTamu(); 
             }
         }
 
