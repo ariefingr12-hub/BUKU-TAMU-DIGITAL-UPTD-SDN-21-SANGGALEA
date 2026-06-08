@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Tamu Digital - Modern High Tech</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* Import Font Modern */
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(15, 23, 36, 0.65);
+            --primary-cyan: #66fcf1;
+            --secondary-gray: #c5c6c7;
+            --border-color: rgba(69, 162, 158, 0.5);
+            --highlight: #f2a900;
+        }
+
+        /* --- BACKGROUND MODERN HIGH-TECH --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--secondary-gray);
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            /* Pola Grid dan Cahaya Neon */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(102, 252, 241, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(69, 162, 158, 0.15), transparent 25%),
+                linear-gradient(rgba(102, 252, 241, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(102, 252, 241, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* --- HEADER & LOGO --- */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .logo-instansi {
+            max-width: 120px; /* Sesuaikan ukuran logo */
+            margin-bottom: 15px;
+            /* Efek glow pada logo */
+            filter: drop-shadow(0 0 15px rgba(102, 252, 241, 0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .logo-instansi:hover {
+            transform: scale(1.05);
+        }
+
+        header h1 {
+            font-size: 3.5em;
+            color: white;
+            margin: 0 0 5px 0;
+            letter-spacing: 2px;
+        }
+
+        header h1 span {
+            color: var(--primary-cyan);
+            text-shadow: 0 0 15px var(--primary-cyan);
+        }
+
+        header p {
+            font-size: 1.2em;
+            letter-spacing: 1px;
+            color: var(--secondary-gray);
+            margin: 0;
+        }
+
+        /* --- GLASSMORPHISM CARD --- */
+        .form-section, .data-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(102, 252, 241, 0.05);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(5, 5, 5, 0.6);
+            border: 1px solid var(--border-color);
+            color: var(--primary-cyan);
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        select option {
+            background: #0f1724;
+            color: var(--primary-cyan);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 12px rgba(102, 252, 241, 0.4);
+            background: rgba(5, 5, 5, 0.8);
+        }
+
+        .btn-glow {
+            background: rgba(102, 252, 241, 0.1);
+            color: var(--primary-cyan);
+            border: 1px solid var(--primary-cyan);
+            padding: 12px 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-glow:hover {
+            background: var(--primary-cyan);
+            color: #050505;
+            box-shadow: 0 0 20px var(--primary-cyan);
+            transform: translateY(-2px);
+        }
+
+        .header-data {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-data h2 {
+            margin: 0;
+            color: white;
+        }
+
+        /* Filter Buttons */
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px;
+            border-radius: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-filter {
+            background: transparent;
+            color: var(--secondary-gray);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-filter.active, .btn-filter:hover {
+            background: var(--primary-cyan);
+            color: #050505;
+            box-shadow: 0 0 10px rgba(102, 252, 241, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(69, 162, 158, 0.2);
+        }
+
+        th {
+            color: var(--primary-cyan);
+            font-weight: 700;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        tr:hover td {
+            background: rgba(102, 252, 241, 0.05);
+        }
+
+        .badge-khusus {
+            background: rgba(242, 169, 0, 0.15);
+            color: var(--highlight);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            border: 1px solid rgba(242, 169, 0, 0.5);
+            font-weight: 600;
+        }
+
+        .badge-umum {
+            background: rgba(102, 252, 241, 0.1);
+            color: var(--primary-cyan);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            border: 1px solid rgba(102, 252, 241, 0.3);
+            font-weight: 600;
+        }
+
+        /* Animasi Sederhana */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- FITUR CETAK (PRINT) --- */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .data-section {
+                box-shadow: none;
+                border: none;
+                background: transparent;
+                padding: 0;
+            }
+            header {
+                margin-bottom: 20px;
+            }
+            .logo-instansi {
+                filter: none; /* Hilangkan efek glow saat dicetak */
+                max-width: 100px;
+            }
+            th, td {
+                border: 1px solid #ccc;
+                color: black;
+                padding: 8px;
+            }
+            table {
+                border-collapse: collapse;
+            }
+            .badge-khusus, .badge-umum {
+                border: none;
+                color: black;
+                background: transparent;
+                padding: 0;
+                font-weight: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <img src="logo.png" alt="Logo" class="logo-instansi">
+            <h1 class="no-print">Buku Tamu <span>Digital</span></h1>
+            <p class="no-print">Sistem Pendaftaran Tamu Terintegrasi</p>
+        </header>
+
+        <main>
+            <section class="form-section no-print">
+                <form id="tamuForm">
+                    <div class="input-group">
+                        <select id="kategori" required>
+                            <option value="" disabled selected>-- Pilih Kategori Tamu --</option>
+                            <option value="Umum">Tamu Umum</option>
+                            <option value="Khusus">Tamu Khusus (VIP / Undangan)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="nama" required placeholder="Nama Lengkap">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="instansi" required placeholder="Instansi / Perusahaan">
+                    </div>
+                    <div class="input-group">
+                        <textarea id="pesan" required placeholder="Pesan atau Tujuan Kunjungan" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn-glow">Kirim Data Tamu</button>
+                </form>
+            </section>
+
+            <section class="data-section">
+                <div class="header-data">
+                    <h2>Daftar Kehadiran</h2>
+                    
+                    <div class="filter-group no-print">
+                        <button class="btn-filter active" onclick="filterData('Semua', this)">Semua</button>
+                        <button class="btn-filter" onclick="filterData('Umum', this)">Umum</button>
+                        <button class="btn-filter" onclick="filterData('Khusus', this)">Khusus</button>
+                    </div>
+
+                    <button id="btnCetak" class="btn-glow no-print" style="font-size: 1em; padding: 8px 20px;">Cetak Laporan</button>
+                </div>
+                
+                <table id="tabelTamu">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Instansi</th>
+                            <th>Kategori</th>
+                            <th>Pesan</th>
+                            <th>Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="daftarTamu">
+                        </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- PENTING: GANTI DENGAN KREDENSIAL SUPABASE ANDA ---
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_KEY = 'YOUR_ANON_KEY';
+
+        const { createClient } = supabase;
+        const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const form = document.getElementById('tamuForm');
+        const daftarTamu = document.getElementById('daftarTamu');
+        const btnCetak = document.getElementById('btnCetak');
+        
+        let allTamuData = []; 
+
+        async function fetchTamu() {
+            const { data, error } = await db
+                .from('tamu')
+                .select('*')
+                .order('waktu', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching data:', error);
+                return;
+            }
+
+            allTamuData = data; 
+            renderTabel(allTamuData);
+        }
+
+        function renderTabel(data) {
+            daftarTamu.innerHTML = '';
+            
+            if(data.length === 0) {
+                daftarTamu.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color: #c5c6c7;">Sistem siap. Belum ada data tamu.</td></tr>`;
+                return;
+            }
+
+            data.forEach((tamu, index) => {
+                const date = new Date(tamu.waktu).toLocaleString('id-ID');
+                const badgeClass = tamu.kategori === 'Khusus' ? 'badge-khusus' : 'badge-umum';
+                
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${tamu.nama}</td>
+                        <td>${tamu.instansi}</td>
+                        <td><span class="${badgeClass}">${tamu.kategori || 'Umum'}</span></td>
+                        <td>${tamu.pesan}</td>
+                        <td>${date}</td>
+                    </tr>
+                `;
+                daftarTamu.innerHTML += row;
+            });
+        }
+
+        function filterData(kategori, btnElement) {
+            document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            if (kategori === 'Semua') {
+                renderTabel(allTamuData);
+            } else {
+                const filteredData = allTamuData.filter(tamu => tamu.kategori === kategori);
+                renderTabel(filteredData);
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const kategori = document.getElementById('kategori').value;
+            const nama = document.getElementById('nama').value;
+            const instansi = document.getElementById('instansi').value;
+            const pesan = document.getElementById('pesan').value;
+
+            const btnSubmit = e.target.querySelector('button');
+            btnSubmit.textContent = 'Menyimpan...';
+            btnSubmit.disabled = true;
+
+            const { error } = await db
+                .from('tamu')
+                .insert([{ kategori, nama, instansi, pesan }]);
+
+            if (error) {
+                alert('Gagal menyimpan data! Periksa koneksi atau API Key.');
+                console.error(error);
+            } else {
+                form.reset();
+                document.querySelector('.btn-filter').click(); 
+                fetchTamu(); 
+            }
+
+            btnSubmit.textContent = 'Kirim Data Tamu';
+            btnSubmit.disabled = false;
+        });
+
+        btnCetak.addEventListener('click', () => {
+            window.print();
+        });
+
+        fetchTamu();
+    </script>
+</body>
+</html>
