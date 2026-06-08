@@ -38,7 +38,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px; /* Diperlebar sedikit karena tabel makin banyak kolom */
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -66,10 +66,6 @@
             margin: 0;
             letter-spacing: 2px;
             font-weight: 700;
-        }
-
-        header h1 span {
-            color: var(--primary-cyan);
         }
 
         /* --- GLASSMORPHISM CARD --- */
@@ -197,10 +193,16 @@
             box-shadow: 0 0 10px rgba(102, 252, 241, 0.5);
         }
 
+        /* Tabel Responsif & Rapi */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            min-width: 800px;
         }
 
         th, td {
@@ -212,7 +214,7 @@
         th {
             color: var(--primary-cyan);
             font-weight: 700;
-            font-size: 1.2em;
+            font-size: 1.1em;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -253,7 +255,7 @@
             header { margin-bottom: 20px; }
             .logo-instansi { max-width: 100px; }
             th, td { border: 1px solid #ccc; color: black; padding: 8px; }
-            table { border-collapse: collapse; }
+            table { border-collapse: collapse; min-width: 100%; }
             .badge-khusus, .badge-umum { border: none; color: black; background: transparent; padding: 0; font-weight: normal; }
         }
     </style>
@@ -263,7 +265,7 @@
     <div class="container">
         <header>
             <img src="logo.png" alt="Logo" class="logo-instansi">
-            <h1 class="no-print">Buku Tamu <span>Digital</span></h1>
+            <h1 class="no-print">Buku Tamu Digital</h1>
         </header>
 
         <main>
@@ -283,7 +285,10 @@
                         <input type="text" id="instansi" required placeholder="Instansi / Perusahaan">
                     </div>
                     <div class="input-group">
-                        <textarea id="pesan" required placeholder="Pesan atau Tujuan Kunjungan" rows="3"></textarea>
+                        <input type="text" id="tujuan" required placeholder="Tujuan Kunjungan">
+                    </div>
+                    <div class="input-group">
+                        <textarea id="pesan" placeholder="Pesan atau Kesan (Opsional)" rows="3"></textarea>
                     </div>
                     <button type="submit" class="btn-glow">Kirim Data Tamu</button>
                 </form>
@@ -302,20 +307,23 @@
                     <button id="btnCetak" class="btn-glow no-print" style="font-size: 1em; padding: 8px 20px;">Cetak Laporan</button>
                 </div>
                 
-                <table id="tabelTamu">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Instansi</th>
-                            <th>Kategori</th>
-                            <th>Pesan</th>
-                            <th>Waktu</th>
-                            <th class="no-print">Aksi</th> </tr>
-                    </thead>
-                    <tbody id="daftarTamu">
-                        </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table id="tabelTamu">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Instansi</th>
+                                <th>Kategori</th>
+                                <th>Tujuan</th> <th>Pesan</th>
+                                <th>Waktu</th>
+                                <th class="no-print">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="daftarTamu">
+                            </tbody>
+                    </table>
+                </div>
             </section>
         </main>
     </div>
@@ -352,7 +360,7 @@
             daftarTamu.innerHTML = '';
             
             if(data.length === 0) {
-                daftarTamu.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px; color: #c5c6c7;">Sistem siap. Belum ada data tamu.</td></tr>`;
+                daftarTamu.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px; color: #c5c6c7;">Sistem siap. Belum ada data tamu.</td></tr>`;
                 return;
             }
 
@@ -360,13 +368,18 @@
                 const date = new Date(tamu.waktu).toLocaleString('id-ID');
                 const badgeClass = tamu.kategori === 'Khusus' ? 'badge-khusus' : 'badge-umum';
                 
+                // Jika data lama belum punya 'tujuan', kita beri tanda strip '-'
+                const tujuanTeks = tamu.tujuan ? tamu.tujuan : '-';
+                const pesanTeks = tamu.pesan ? tamu.pesan : '-';
+
                 const row = `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${tamu.nama}</td>
                         <td>${tamu.instansi}</td>
                         <td><span class="${badgeClass}">${tamu.kategori || 'Umum'}</span></td>
-                        <td>${tamu.pesan}</td>
+                        <td>${tujuanTeks}</td>
+                        <td>${pesanTeks}</td>
                         <td>${date}</td>
                         <td class="no-print">
                             <button class="btn-delete" onclick="hapusTamu(${tamu.id})">Hapus</button>
@@ -389,13 +402,10 @@
             }
         }
 
-        // --- FUNGSI BARU: HAPUS DATA ---
         async function hapusTamu(id) {
-            // Tampilkan pop-up konfirmasi
             const konfirmasi = confirm("Apakah Anda yakin ingin menghapus data tamu ini?");
-            if (!konfirmasi) return; // Batal jika user klik 'Cancel'
+            if (!konfirmasi) return;
 
-            // Perintah hapus ke Supabase
             const { error } = await db
                 .from('tamu')
                 .delete()
@@ -405,7 +415,6 @@
                 alert('Gagal menghapus data! Periksa koneksi Anda.');
                 console.error(error);
             } else {
-                // Refresh data setelah berhasil dihapus
                 fetchTamu(); 
             }
         }
@@ -416,15 +425,17 @@
             const kategori = document.getElementById('kategori').value;
             const nama = document.getElementById('nama').value;
             const instansi = document.getElementById('instansi').value;
+            const tujuan = document.getElementById('tujuan').value; // Ambil nilai tujuan
             const pesan = document.getElementById('pesan').value;
 
             const btnSubmit = e.target.querySelector('button');
             btnSubmit.textContent = 'Menyimpan...';
             btnSubmit.disabled = true;
 
+            // Masukkan variabel 'tujuan' ke dalam proses insert
             const { error } = await db
                 .from('tamu')
-                .insert([{ kategori, nama, instansi, pesan }]);
+                .insert([{ kategori, nama, instansi, tujuan, pesan }]);
 
             if (error) {
                 alert('Gagal menyimpan data! Periksa koneksi atau API Key.');
