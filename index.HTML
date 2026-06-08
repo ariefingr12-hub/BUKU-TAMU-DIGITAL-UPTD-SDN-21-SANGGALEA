@@ -52,10 +52,8 @@
         }
 
         .logo-instansi {
-            max-width: 120px; /* Sesuaikan ukuran logo */
+            max-width: 120px;
             margin-bottom: 15px;
-            /* Efek glow pada logo */
-            filter: drop-shadow(0 0 15px rgba(102, 252, 241, 0.5));
             transition: transform 0.3s ease;
         }
 
@@ -65,21 +63,14 @@
 
         header h1 {
             font-size: 3.5em;
-            color: white;
-            margin: 0 0 5px 0;
+            color: #ffffff; /* Warna putih solid */
+            margin: 0;
             letter-spacing: 2px;
+            font-weight: 700;
         }
 
         header h1 span {
-            color: var(--primary-cyan);
-            text-shadow: 0 0 15px var(--primary-cyan);
-        }
-
-        header p {
-            font-size: 1.2em;
-            letter-spacing: 1px;
-            color: var(--secondary-gray);
-            margin: 0;
+            color: var(--primary-cyan); /* Warna cyan solid tanpa efek blur/aneh */
         }
 
         /* --- GLASSMORPHISM CARD --- */
@@ -256,7 +247,6 @@
                 margin-bottom: 20px;
             }
             .logo-instansi {
-                filter: none; /* Hilangkan efek glow saat dicetak */
                 max-width: 100px;
             }
             th, td {
@@ -283,7 +273,6 @@
         <header>
             <img src="logo.png" alt="Logo" class="logo-instansi">
             <h1 class="no-print">Buku Tamu <span>Digital</span></h1>
-            <p class="no-print">Sistem Pendaftaran Tamu Terintegrasi</p>
         </header>
 
         <main>
@@ -341,7 +330,6 @@
     </div>
 
     <script>
-        // --- PENTING: GANTI DENGAN KREDENSIAL SUPABASE ANDA ---
         const SUPABASE_URL = 'https://wylkasidfbfhowozcuce.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bGthc2lkZmJmaG93b3pjdWNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1OTc2ODAsImV4cCI6MjA5NTE3MzY4MH0.JGkdTtl3Nh1LcDeR_dzC1lMiA_IslkQQ3QJFtu3u07A';
 
