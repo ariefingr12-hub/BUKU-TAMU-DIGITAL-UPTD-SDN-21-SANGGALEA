@@ -20,7 +20,7 @@
             --highlight: #f2a900;
         }
 
-        /* --- BACKGROUND MODERN HIGH-TECH --- */
+        /* --- BACKGROUND MENGGUNAKAN FOTO --- */
         body {
             margin: 0;
             padding: 0;
@@ -28,13 +28,12 @@
             color: var(--secondary-gray);
             min-height: 100vh;
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(102, 252, 241, 0.15), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(69, 162, 158, 0.15), transparent 25%),
-                linear-gradient(rgba(102, 252, 241, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(102, 252, 241, 0.05) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            /* Overlay gradient gelap agar teks tetap terbaca + foto.jpg sebagai background */
+            background-image: linear-gradient(rgba(5, 5, 5, 0.8), rgba(5, 5, 5, 0.8)), url('foto.jpg');
+            background-size: cover;
+            background-position: center;
             background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         .container {
@@ -66,6 +65,7 @@
             margin: 0;
             letter-spacing: 2px;
             font-weight: 700;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
 
         /* --- BAGIAN BARU: INFO SEKOLAH (VISI & FOTO GTK) --- */
@@ -315,7 +315,7 @@
         }
 
         @media print {
-            body { background: white; color: black; }
+            body { background: white; color: black; background-image: none !important; }
             .no-print { display: none !important; }
             .data-section { box-shadow: none; border: none; background: transparent; padding: 0; }
             header { margin-bottom: 20px; }
