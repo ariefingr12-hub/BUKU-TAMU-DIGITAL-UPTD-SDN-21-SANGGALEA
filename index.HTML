@@ -38,7 +38,7 @@
         }
 
         .container {
-            max-width: 1100px; /* Diperlebar sedikit karena tabel makin banyak kolom */
+            max-width: 1100px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -46,7 +46,7 @@
         /* --- HEADER & LOGO --- */
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             animation: fadeIn 1.5s ease-in-out;
         }
 
@@ -68,16 +68,83 @@
             font-weight: 700;
         }
 
+        /* --- BAGIAN BARU: INFO SEKOLAH (VISI & FOTO GTK) --- */
+        .info-sekolah-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .info-sekolah-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .visi-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .visi-box h2 {
+            color: var(--primary-cyan);
+            margin-top: 0;
+            font-size: 2em;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .visi-text {
+            font-size: 1.4em;
+            color: #ffffff;
+            font-style: italic;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .foto-gtk-box {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .foto-gtk {
+            width: 100%;
+            height: 100%;
+            min-height: 200px;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid rgba(102, 252, 241, 0.3);
+            box-shadow: 0 0 15px rgba(102, 252, 241, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .foto-gtk:hover {
+            transform: scale(1.02);
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 25px var(--primary-cyan);
+        }
+
         /* --- GLASSMORPHISM CARD --- */
-        .form-section, .data-section {
+        .form-section, .data-section, .info-card {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(102, 252, 241, 0.05);
+        }
+
+        .form-section, .data-section {
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(102, 252, 241, 0.05);
         }
 
         .input-group {
@@ -193,7 +260,6 @@
             box-shadow: 0 0 10px rgba(102, 252, 241, 0.5);
         }
 
-        /* Tabel Responsif & Rapi */
         .table-responsive {
             overflow-x: auto;
         }
@@ -269,6 +335,19 @@
         </header>
 
         <main>
+            <div class="info-sekolah-grid no-print">
+                <div class="info-card visi-box">
+                    <h2>Visi Sekolah</h2>
+                    <div class="visi-text">
+                        "Terwujudnya Generasi yang Cerdas, Berkarakter, Unggul dalam Prestasi, dan Berwawasan Teknologi Modern."
+                    </div>
+                </div>
+
+                <div class="info-card foto-gtk-box">
+                    <img src="gtk.jpg" alt="Foto GTK Sekolah" class="foto-gtk" onerror="this.src='https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1000'">
+                </div>
+            </div>
+
             <section class="form-section no-print">
                 <form id="tamuForm">
                     <div class="input-group">
@@ -315,7 +394,8 @@
                                 <th>Nama</th>
                                 <th>Instansi</th>
                                 <th>Kategori</th>
-                                <th>Tujuan</th> <th>Pesan</th>
+                                <th>Tujuan</th>
+                                <th>Pesan</th>
                                 <th>Waktu</th>
                                 <th class="no-print">Aksi</th>
                             </tr>
@@ -368,7 +448,6 @@
                 const date = new Date(tamu.waktu).toLocaleString('id-ID');
                 const badgeClass = tamu.kategori === 'Khusus' ? 'badge-khusus' : 'badge-umum';
                 
-                // Jika data lama belum punya 'tujuan', kita beri tanda strip '-'
                 const tujuanTeks = tamu.tujuan ? tamu.tujuan : '-';
                 const pesanTeks = tamu.pesan ? tamu.pesan : '-';
 
@@ -425,14 +504,13 @@
             const kategori = document.getElementById('kategori').value;
             const nama = document.getElementById('nama').value;
             const instansi = document.getElementById('instansi').value;
-            const tujuan = document.getElementById('tujuan').value; // Ambil nilai tujuan
+            const tujuan = document.getElementById('tujuan').value;
             const pesan = document.getElementById('pesan').value;
 
             const btnSubmit = e.target.querySelector('button');
             btnSubmit.textContent = 'Menyimpan...';
             btnSubmit.disabled = true;
 
-            // Masukkan variabel 'tujuan' ke dalam proses insert
             const { error } = await db
                 .from('tamu')
                 .insert([{ kategori, nama, instansi, tujuan, pesan }]);
