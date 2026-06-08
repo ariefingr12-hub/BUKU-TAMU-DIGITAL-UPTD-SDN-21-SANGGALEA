@@ -62,10 +62,14 @@
 
         header h1 {
             font-size: 3.5em;
-            color: #ffffff; /* Semua teks judul menjadi putih seragam */
+            color: #ffffff;
             margin: 0;
             letter-spacing: 2px;
             font-weight: 700;
+        }
+
+        header h1 span {
+            color: var(--primary-cyan);
         }
 
         /* --- GLASSMORPHISM CARD --- */
@@ -259,8 +263,7 @@
     <div class="container">
         <header>
             <img src="logo.png" alt="Logo" class="logo-instansi">
-            <!-- Judul sekarang memiliki teks putih seragam -->
-            <h1 class="no-print">Buku Tamu Digital</h1>
+            <h1 class="no-print">Buku Tamu <span>Digital</span></h1>
         </header>
 
         <main>
@@ -308,12 +311,10 @@
                             <th>Kategori</th>
                             <th>Pesan</th>
                             <th>Waktu</th>
-                            <th class="no-print">Aksi</th>
-                        </tr>
+                            <th class="no-print">Aksi</th> </tr>
                     </thead>
                     <tbody id="daftarTamu">
-                        <!-- Data akan muncul disini -->
-                    </tbody>
+                        </tbody>
                 </table>
             </section>
         </main>
@@ -388,10 +389,13 @@
             }
         }
 
+        // --- FUNGSI BARU: HAPUS DATA ---
         async function hapusTamu(id) {
+            // Tampilkan pop-up konfirmasi
             const konfirmasi = confirm("Apakah Anda yakin ingin menghapus data tamu ini?");
-            if (!konfirmasi) return;
+            if (!konfirmasi) return; // Batal jika user klik 'Cancel'
 
+            // Perintah hapus ke Supabase
             const { error } = await db
                 .from('tamu')
                 .delete()
@@ -401,6 +405,7 @@
                 alert('Gagal menghapus data! Periksa koneksi Anda.');
                 console.error(error);
             } else {
+                // Refresh data setelah berhasil dihapus
                 fetchTamu(); 
             }
         }
